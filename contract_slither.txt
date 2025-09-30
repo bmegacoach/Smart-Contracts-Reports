@@ -1,64 +1,71 @@
 'solc --version' running
-'solc contract.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/root/Smart-Contract-Files' running
+'solc contract.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes,compact-format --allow-paths .,/root/Smart-Contract-Files' running
 Compilation warnings/errors on contract.sol:
-Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
- --> contract.sol:3:1:
-  |
-3 | pragma solidity ^0.6.12;
-  | ^^^^^^^^^^^^^^^^^^^^^^^^
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> contract.sol
+
+Warning: Return value of low-level calls not used.
+  --> contract.sol:45:9:
+   |
+45 |         delegate.delegatecall(data);
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-Traceback (most recent call last):
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 581, in _run_solc
-    ret: Dict = json.loads(stdout)
-                ~~~~~~~~~~^^^^^^^^
-  File "/usr/lib/python3.13/json/__init__.py", line 346, in loads
-    return _default_decoder.decode(s)
-           ~~~~~~~~~~~~~~~~~~~~~~~^^^
-  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
-    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
-               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.13/json/decoder.py", line 363, in raw_decode
-    raise JSONDecodeError("Expecting value", s, err.value) from None
-json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
-
-During handling of the above exception, another exception occurred:
-
-Traceback (most recent call last):
-  File "/root/Smart-Contract-Files/venv/bin/slither", line 8, in <module>
-    sys.exit(main())
-             ~~~~^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 776, in main
-    main_impl(all_detector_classes=detectors, all_printer_classes=printers)
-    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 882, in main_impl
-    ) = process_all(filename, args, detector_classes, printer_classes)
-        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 96, in process_all
-    compilations = compile_all(target, **vars(args))
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 722, in compile_all
-    compilations.append(CryticCompile(target, **kwargs))
-                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 211, in __init__
-    self._compile(**kwargs)
-    ~~~~~~~~~~~~~^^^^^^^^^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 633, in _compile
-    self._platform.compile(self, **kwargs)
-    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 150, in compile
-    targets_json = _get_targets_json(compilation_unit, self._target, **kwargs)
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 279, in _get_targets_json
-    return _run_solc(
-        compilation_unit,
-    ...<6 lines>...
-        force_legacy_json=force_legacy_json,
-    )
-  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 585, in _run_solc
-    raise InvalidCompilation(f"Invalid solc compilation {stderr}")
-crytic_compile.platform.exceptions.InvalidCompilation: Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
- --> contract.sol:3:1:
-  |
-3 | pragma solidity ^0.6.12;
-  | ^^^^^^^^^^^^^^^^^^^^^^^^
-
-
+INFO:Detectors:
+VulnerablePatterns.execDelegate(bytes) (contract.sol#42-46) uses delegatecall to a input-controlled function id
+	- delegate.delegatecall(data) (contract.sol#45)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#controlled-delegatecall
+INFO:Detectors:
+Reentrancy in VulnerablePatterns.withdraw(uint256) (contract.sol#26-32):
+	External calls:
+	- (ok,None) = msg.sender.call{value: amount}() (contract.sol#29)
+	State variables written after the call(s):
+	- balances[msg.sender] -= amount (contract.sol#31)
+	VulnerablePatterns.balances (contract.sol#6) can be used in cross function reentrancies:
+	- VulnerablePatterns.balances (contract.sol#6)
+	- VulnerablePatterns.deposit() (contract.sol#22-24)
+	- VulnerablePatterns.withdraw(uint256) (contract.sol#26-32)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities
+INFO:Detectors:
+VulnerablePatterns.kill() (contract.sol#49-52) allows anyone to destruct the contract
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#suicidal
+INFO:Detectors:
+VulnerablePatterns.setDelegate(address) (contract.sol#35-39) uses tx.origin for authorization: require(bool,string)(tx.origin == owner,not owner) (contract.sol#37)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#dangerous-usage-of-txorigin
+INFO:Detectors:
+VulnerablePatterns.execDelegate(bytes) (contract.sol#42-46) ignores return value by delegate.delegatecall(data) (contract.sol#45)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#unchecked-low-level-calls
+INFO:Detectors:
+VulnerablePatterns.setDelegate(address)._d (contract.sol#35) lacks a zero-check on :
+		- delegate = _d (contract.sol#38)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#missing-zero-address-validation
+INFO:Detectors:
+Version constraint ^0.6.12 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
+	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
+	- MissingSideEffectsOnSelectorAccess
+	- AbiReencodingHeadOverflowWithStaticArrayCleanup
+	- DirtyBytesArrayToStorage
+	- DataLocationChangeInInternalOverride
+	- NestedCalldataArrayAbiReencodingSizeValidation
+	- SignedImmutables
+	- ABIDecodeTwoDimensionalArrayMemory
+	- KeccakCaching
+	- EmptyByteArrayCopy
+	- DynamicArrayCleanup.
+It is used by:
+	- ^0.6.12 (contract.sol#3)
+solc-0.6.12 is an outdated solc version. Use a more recent version (at least 0.8.0), if possible.
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
+INFO:Detectors:
+Low level call in VulnerablePatterns.withdraw(uint256) (contract.sol#26-32):
+	- (ok,None) = msg.sender.call{value: amount}() (contract.sol#29)
+Low level call in VulnerablePatterns.execDelegate(bytes) (contract.sol#42-46):
+	- delegate.delegatecall(data) (contract.sol#45)
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
+INFO:Detectors:
+Parameter VulnerablePatterns.setDelegate(address)._d (contract.sol#35) is not in mixedCase
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#conformance-to-solidity-naming-conventions
+INFO:Detectors:
+VulnerablePatterns.owner (contract.sol#7) should be immutable 
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#state-variables-that-could-be-declared-immutable
+INFO:Slither:contract.sol analyzed (1 contracts with 100 detectors), 12 result(s) found
