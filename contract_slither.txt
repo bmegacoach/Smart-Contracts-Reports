@@ -1,11 +1,23 @@
 'solc --version' running
 'solc contract.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/root/Smart-Contract-Files' running
 Compilation warnings/errors on contract.sol:
-Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
- --> contract.sol:2:1:
+Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> contract.sol
+
+Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.8.30;"
+--> contract.sol
+
+Error: Explicit type conversion not allowed from "address" to "uint32".
+ --> contract.sol:7:13:
   |
-2 | pragma solidity 0.5.0;
-  | ^^^^^^^^^^^^^^^^^^^^^^
+7 |         if (uint32(msg.sender) == 0)
+  |             ^^^^^^^^^^^^^^^^^^
+
+Error: "send" and "transfer" are only available for objects of type "address payable", not "address".
+  --> contract.sol:12:9:
+   |
+12 |         msg.sender.transfer(address(this).balance);
+   |         ^^^^^^^^^^^^^^^^^^^
 
 
 Traceback (most recent call last):
@@ -55,10 +67,22 @@ Traceback (most recent call last):
     )
   File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 585, in _run_solc
     raise InvalidCompilation(f"Invalid solc compilation {stderr}")
-crytic_compile.platform.exceptions.InvalidCompilation: Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
- --> contract.sol:2:1:
+crytic_compile.platform.exceptions.InvalidCompilation: Invalid solc compilation Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing "SPDX-License-Identifier: <SPDX-License>" to each source file. Use "SPDX-License-Identifier: UNLICENSED" for non-open-source code. Please see https://spdx.org for more information.
+--> contract.sol
+
+Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.8.30;"
+--> contract.sol
+
+Error: Explicit type conversion not allowed from "address" to "uint32".
+ --> contract.sol:7:13:
   |
-2 | pragma solidity 0.5.0;
-  | ^^^^^^^^^^^^^^^^^^^^^^
+7 |         if (uint32(msg.sender) == 0)
+  |             ^^^^^^^^^^^^^^^^^^
+
+Error: "send" and "transfer" are only available for objects of type "address payable", not "address".
+  --> contract.sol:12:9:
+   |
+12 |         msg.sender.transfer(address(this).balance);
+   |         ^^^^^^^^^^^^^^^^^^^
 
 
