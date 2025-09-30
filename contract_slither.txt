@@ -1,28 +1,64 @@
 'solc --version' running
 'solc contract.sol --combined-json abi,ast,bin,bin-runtime,srcmap,srcmap-runtime,userdoc,devdoc,hashes --allow-paths .,/root/Smart-Contract-Files' running
-INFO:Detectors:
-Reentrancy in CallerFixed.thisIsFine() (contract.sol#33-38):
-	External calls:
-	- (success,data) = fixedAddress.call() (contract.sol#34)
-	Event emitted after the call(s):
-	- ExternalCall(fixedAddress,success,data) (contract.sol#35)
-Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#reentrancy-vulnerabilities-3
-INFO:Detectors:
-Version constraint ^0.8.20 contains known severe issues (https://solidity.readthedocs.io/en/latest/bugs.html)
-	- VerbatimInvalidDeduplication
-	- FullInlinerNonExpressionSplitArgumentEvaluationOrder
-	- MissingSideEffectsOnSelectorAccess.
-It is used by:
-	- ^0.8.20 (contract.sol#4)
-Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
-INFO:Detectors:
-Low level call in CallerFixed.thisIsFine() (contract.sol#33-38):
-	- (success,data) = fixedAddress.call() (contract.sol#34)
-Low level call in CallerFixed.reentrancy() (contract.sol#41-49):
-	- (success,data) = fixedAddress.call() (contract.sol#46)
-Low level call in CallerFixed.callUserAddress(address) (contract.sol#51-57):
-	- (success,data) = addr.call() (contract.sol#53)
-Low level call in CallerFixed.callStoredAddress() (contract.sol#59-65):
-	- (success,data) = storedAddress.call() (contract.sol#61)
-Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#low-level-calls
-INFO:Slither:contract.sol analyzed (1 contracts with 100 detectors), 6 result(s) found
+Compilation warnings/errors on contract.sol:
+Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+ --> contract.sol:3:1:
+  |
+3 | pragma solidity ^0.6.12;
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Traceback (most recent call last):
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 581, in _run_solc
+    ret: Dict = json.loads(stdout)
+                ~~~~~~~~~~^^^^^^^^
+  File "/usr/lib/python3.13/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 345, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/json/decoder.py", line 363, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/root/Smart-Contract-Files/venv/bin/slither", line 8, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 776, in main
+    main_impl(all_detector_classes=detectors, all_printer_classes=printers)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 882, in main_impl
+    ) = process_all(filename, args, detector_classes, printer_classes)
+        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/slither/__main__.py", line 96, in process_all
+    compilations = compile_all(target, **vars(args))
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 722, in compile_all
+    compilations.append(CryticCompile(target, **kwargs))
+                        ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 211, in __init__
+    self._compile(**kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/crytic_compile.py", line 633, in _compile
+    self._platform.compile(self, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 150, in compile
+    targets_json = _get_targets_json(compilation_unit, self._target, **kwargs)
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 279, in _get_targets_json
+    return _run_solc(
+        compilation_unit,
+    ...<6 lines>...
+        force_legacy_json=force_legacy_json,
+    )
+  File "/root/Smart-Contract-Files/venv/lib/python3.13/site-packages/crytic_compile/platform/solc.py", line 585, in _run_solc
+    raise InvalidCompilation(f"Invalid solc compilation {stderr}")
+crytic_compile.platform.exceptions.InvalidCompilation: Invalid solc compilation Error: Source file requires different compiler version (current compiler is 0.8.30+commit.73712a01.Linux.g++) - note that nightly builds are considered to be strictly less than the released version
+ --> contract.sol:3:1:
+  |
+3 | pragma solidity ^0.6.12;
+  | ^^^^^^^^^^^^^^^^^^^^^^^^
+
+
